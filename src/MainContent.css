@@ -1,0 +1,31 @@
+/* Main content styles */
+main {
+  padding: 40px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* Main content section styles */
+section {
+  text-align: center;
+}
+
+section h2 {
+  font-size: 32px;
+  color: #333;
+  font-weight: 600;
+}
+
+section p {
+  font-size: 18px;
+  color: #666;
+  line-height: 1.5;
+}

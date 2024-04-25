@@ -1,0 +1,101 @@
+/* App.css
+body,html {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.container-fluid {
+  padding: 0 20px;
+}
+
+.header {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.navbar {
+  background-color: #0056b3; Darker shade for contrast
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.navbar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar li {
+  margin: 0 10px;
+}
+
+.navbar a {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.navbar a:hover {
+  color: #ffdd57;
+}
+
+.icon {
+  margin-right: 5px;
+}
+
+.main-content h2 {
+  color: #0056b3;
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #e7e7e7;
+}
+
+footer a {
+  color: #333;
+} */
+
+/* body, h1, h2, p {
+  margin: 0;
+  padding: 0;
+} */
+
+/* Global styles */
+/* body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+} */
+
