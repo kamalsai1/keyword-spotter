@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import MainContent from "./MainContent";
 import Footer from "./Footer.js";
 import AudioRecorder from "./AudioRecorder.js";
-import "./App.css"; // Assuming you have an App.css file for global styles
+import "./App.css"; // Assuming you have an App.css file for global styles 
 import image from "./logoiiits.png"
 
 function App() {
