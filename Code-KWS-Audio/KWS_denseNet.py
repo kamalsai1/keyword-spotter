@@ -207,7 +207,6 @@ criterion = nn.CrossEntropyLoss()
 
 @app.route('/model', methods=['POST'])
 def run_model():
-
 # Server code
    data = request.files
    data = data.get('audio')

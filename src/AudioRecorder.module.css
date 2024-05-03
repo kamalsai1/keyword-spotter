@@ -1,7 +1,7 @@
 
 /* Styles for the main container */
 .mainContainer {
-  max-width: 600px;
+  /* max-width: 600px; */
   margin: 50px auto;
   background-color: #f9f9f9;
   padding: 20px;
@@ -123,11 +123,12 @@ button[type="submit"]:hover {
 }
 
 /* Styles for the waveform container */
-#waveform {
+/* #waveform {
   width: 100%;
-  height: 150px; /* Adjust the height as needed */
+  height: 150px; Adjust the height as needed
   margin-top: 15px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #fff;
-}
+  z-index: 1;
+} */

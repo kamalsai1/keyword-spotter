@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import styles from "./AudioRecorder.module.css";
 import WaveSurfer from "wavesurfer.js";
-
 import axios from "axios";
 
 function AudioRecorder() {
@@ -9,17 +7,17 @@ function AudioRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
-  // const audioInputRef = useRef();
   const mediaRecorderRef = useRef();
   const [submittedAudioURL, setSubmittedAudioURL] = useState("");
   const [audioBlob, setAudioBlob] = useState(null);
+  const waveformRef = useRef(null);
+  const [waveSurfer, setWaveSurfer] = useState(null);
+  const [prediction, setPrediction] = useState("");
 
   const startRecording = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorderRef.current = new MediaRecorder(stream);
         mediaRecorderRef.current.start();
         setIsRecording(true);
@@ -31,10 +29,10 @@ function AudioRecorder() {
         };
 
         mediaRecorderRef.current.onstop = function () {
-          const audioBlob = new Blob(audioChunks, { type: "audio/wav" }); // Ensure you set the correct MIME type
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
           const audioUrl = URL.createObjectURL(audioBlob);
           setAudioURL(audioUrl);
-          setAudioBlob(audioBlob); // Store the Blob in state
+          setAudioBlob(audioBlob);
         };
       } catch (err) {
         console.error("Error accessing the microphone:", err);
@@ -51,8 +49,8 @@ function AudioRecorder() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the form from actually submitting
-    setSubmittedAudioURL(audioURL); // Set the submitted audio URL
+    e.preventDefault();
+    setSubmittedAudioURL(audioURL);
     console.log(audioURL);
   };
 
@@ -73,12 +71,9 @@ function AudioRecorder() {
     const file = e.target.files[0];
     if (file) {
       setAudioURL(URL.createObjectURL(file));
-      setAudioBlob(file); // Assuming 'file' is the Blob/File object
+      setAudioBlob(file);
     }
   };
-
-  const waveformRef = useRef(null);
-  const [waveSurfer, setWaveSurfer] = useState(null);
 
   useEffect(() => {
     const ws = WaveSurfer.create({
@@ -87,25 +82,15 @@ function AudioRecorder() {
       progressColor: "#0056b3",
       cursorColor: "transparent",
       barWidth: 2,
-      barRadius: 3,
-      responsive: true,
       height: 100,
       normalize: true,
-      hideScrollbar: true,
-    });
-
-    ws.on("ready", () => {
-      console.log("WaveSurfer is ready");
-      ws.play();
-    });
-    ws.on("error", (e) => {
-      console.error("WaveSurfer error:", e);
+      responsive: true,
     });
 
     setWaveSurfer(ws);
 
     return () => ws && ws.destroy();
-  }, []); // Removed dependency on waveSurfer
+  }, [audioBlob]);
 
   useEffect(() => {
     if (waveSurfer && submittedAudioURL) {
@@ -113,40 +98,39 @@ function AudioRecorder() {
       waveSurfer.on("ready", () => waveSurfer.play());
     }
   }, [submittedAudioURL, waveSurfer]);
-  const handleWaveform = () => {
-    console.log("handleWaveform called");
 
-    if (waveSurfer && submittedAudioURL) {
-      console.log("loading url:", submittedAudioURL);
-      waveSurfer.load(submittedAudioURL);
-
-      waveSurfer.once("ready", () => {
-        console.log("waveform ready");
-        waveSurfer.play();
-      });
-
-      window.dispatchEvent(new Event("resize"));
-    }
-  };
-
-  const spotKeyword = () => {
+  const spotKeyword = async () => {
     if (!submittedAudioURL) {
       console.log("No audio file");
       return;
     }
 
-    // Assuming `audioBlob` is accessible and is the actual blob of the audio file
-    const formData = new FormData();
-    formData.append("audio", audioBlob, 'file'); // Make sure 'audioBlob' is the Blob of your audio file
-    axios.post('http://localhost:5000/model', formData)
-  .then(response => console.log(response.data))
-  .catch(error => console.error('Error uploading the file', error));
+  const audioBlobToWav = async (blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    };
+
+
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "file");
+      const response = await axios.post("http://localhost:5000/model", formData);
+      setPrediction(response.data.prediction);
+    } catch (error) {
+      console.error("Error uploading the file", error);
+    }
   };
 
   return (
-    <div className={styles.audioRecorderContainer}>
-      <h2 style={{ textAlign: "center" }}>Record or Select an Audio File</h2>
-      <div className={styles.buttonsContainer}>
+    <div>
+      <h2>Record or Select an Audio File</h2>
+      <div>
         {isRecording ? (
           <button onClick={stopRecording} disabled={!isRecording}>
             Stop Recording
@@ -156,35 +140,25 @@ function AudioRecorder() {
             Start Recording
           </button>
         )}
-        <span className={styles.timer}>Timer: {timer}s</span>
+        <span>Timer: {timer}s</span>
       </div>
       <form onSubmit={handleSubmit}>
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={handleAudioFileChange}
-          className={styles.audioInput}
-        />
+        <input type="file" accept="audio/*" onChange={handleAudioFileChange} />
         <button type="submit">Submit</button>
       </form>
       {submittedAudioURL && (
-        <div className={styles.audioPlayer}>
+        <div>
           <audio controls src={submittedAudioURL}></audio>
         </div>
       )}
 
-      {/* New buttons for Waveform and Spot Keyword */}
-      <div className={styles.buttonsContainer}>
-        <button className={styles.waveformButton} onClick={handleWaveform}>
-          Waveform
-        </button>
-        <button className={styles.spotKeywordButton} onClick={spotKeyword}>
-          Spot Keyword
-        </button>
+      <div>
+        <button onClick={spotKeyword}>Spot Keyword</button>
+        {prediction && <p>Prediction: {prediction}</p>}
       </div>
 
-      {/* Waveform container */}
-      <div id="waveform" ref={waveformRef}></div>
+      <div ref={waveformRef}></div>+
+      .
     </div>
   );
 }
