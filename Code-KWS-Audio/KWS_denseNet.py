@@ -222,8 +222,8 @@ def run_model():
    model.eval()
 
    keyword = np.genfromtxt('keyWordList',dtype='str')
-   n_fft, n_mels = 1024, 40
-#    n_fft, n_mels = 1440, 40
+   # n_fft, n_mels = 1024, 40
+   n_fft, n_mels = 1440, 40
    xdata, samplerate = soundfile.read('myfile.wav')
 #    xdata, samplerate = soundfile.read('FBNWB01B0004I014.wav')
    xdata = np.squeeze(np.asanyarray(xdata))
