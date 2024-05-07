@@ -48,16 +48,10 @@ function AudioRecorder() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "file");
-      const response = await axios.post("https://keyword-spotter-backend.onrender.com/model", formData);
-      setPrediction(response.data.prediction);
-    } catch (error) {
-      console.error("Error uploading the file", error);
-    }
+    setSubmittedAudioURL(audioURL);
+    console.log(audioURL);
   };
 
   const startTimer = () => {
@@ -96,7 +90,7 @@ function AudioRecorder() {
     setWaveSurfer(ws);
 
     return () => ws && ws.destroy();
-  }, []);
+  }, [audioBlob]);
 
   useEffect(() => {
     if (waveSurfer && submittedAudioURL) {
@@ -110,10 +104,23 @@ function AudioRecorder() {
       console.log("No audio file");
       return;
     }
+
+  const audioBlobToWav = async (blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    };
+
+
     try {
       const formData = new FormData();
       formData.append("audio", audioBlob, "file");
-      const response = await axios.post("https://keyword-spotter-be5g8jwaznqgfs6te7kbpz.streamlit.app/model", formData);
+      const response = await axios.post("http://localhost:5000/model", formData);
       setPrediction(response.data.prediction);
     } catch (error) {
       console.error("Error uploading the file", error);
@@ -150,7 +157,8 @@ function AudioRecorder() {
         {prediction && <p>Prediction: {prediction}</p>}
       </div>
 
-      <div ref={waveformRef}></div>
+      <div ref={waveformRef}></div>+
+      .
     </div>
   );
 }
